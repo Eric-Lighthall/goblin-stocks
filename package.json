@@ -1,0 +1,26 @@
+{
+  "name": "goblin-stocks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "moment-timezone": "^0.5.45",
+    "mongodb": "^6.5.0",
+    "node-cron": "^3.0.3",
+    "passport": "^0.7.0",
+    "passport-bnet": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prettier": "3.2.5"
+  }
+}

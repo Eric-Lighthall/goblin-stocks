@@ -1,0 +1,266 @@
+/* General styles */
+body, html {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1c1c1c;
+    color: #fff;
+}
+
+/* Header and Navigation */
+header {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #333;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.logo img {
+    height: 50px;
+    filter: brightness(0) invert(1);
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links li {
+    margin: 0 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #ff6b6b;
+}
+
+/* Main Content */
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+/* Graph Styles */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #555;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-size: 12px;
+    fill: #aaa;
+}
+
+.line {
+    fill: none;
+    stroke: #ff6b6b;
+    stroke-width: 2px;
+}
+
+.overlay {
+    fill: none;
+    pointer-events: all;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    font-size: 14px;
+    pointer-events: none;
+    color: #fff;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    max-width: 200px;
+    word-wrap: break-word;
+    z-index: 9999;
+}
+
+.tooltip-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.gold-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+}
+
+.focus {
+    display: none;
+}
+
+.focus line {
+    stroke: #fff;
+    stroke-width: 1px;
+    stroke-dasharray: 3 3;
+}
+
+/* Insights Section */
+.insights-section {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+}
+
+.insights-section h2 {
+    color: white;
+}
+
+.insights-section p {
+    background-color: #444;
+    border-left: 5px solid #4caf50;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* About Section */
+.about-section {
+    margin-bottom: 40px;
+}
+
+.about-block {
+    background-color: #2a2a2a;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border-left: 5px solid #4caf50;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.about-block p {
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Time Filters */
+#time-filters {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#time-filters button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#time-filters button:hover {
+    background-color: #45a049;
+}
+
+/* FAQ Section */
+.faq-section {
+    margin-top: 40px;
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.card {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.card-header {
+    background-color: #444;
+    border-bottom: none;
+    padding: 12px 15px;
+    position: relative;
+    cursor: pointer;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.card-header:focus {
+    outline: none;
+}
+
+.card-header::after {
+    content: "\25BC";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 16px;
+    transition: transform 0.3s;
+}
+
+.card-header[aria-expanded="true"]::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.btn-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn-link:hover {
+    color: #ff6b6b;
+    text-decoration: none;
+}
+
+.btn-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.card-body {
+    padding: 12px 15px;
+    font-size: 14px;
+    line-height: 1.6;
+}

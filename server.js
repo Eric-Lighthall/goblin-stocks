@@ -7,7 +7,6 @@ const cron = require('node-cron');
 
 const BNET_ID = process.env.BNET_ID;
 const BNET_SECRET = process.env.BNET_SECRET;
-const PORT = 3000;
 const app = express();
 
 let db,
@@ -126,6 +125,7 @@ cron.schedule('*/30 * * * *', async (req, res) => {
   });
 
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 })

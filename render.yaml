@@ -2,6 +2,6 @@ services:
   - type: web
     name: goblin-stocks
     env: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: node server.js

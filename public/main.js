@@ -1,15 +1,31 @@
 getTokenPrice();
 async function getTokenPrice() {
-    const response = await fetch("/token-prices");
-    const data = await response.json();
-    console.log(data);
-    drawGraph(data);
+    try {
+        const response = await fetch("/token-prices");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+        drawGraph(data)
+    }
+    catch (error) {
+        console.error("Could not fetch token prices: ", error);
+    }
 }
 
 async function updateGraph(timeRange) {
-    const response = await fetch(`/token-prices?timeRange=${timeRange}`);
-    const data = await response.json();
-    drawGraph(data);
+    try {
+        const response = await fetch(`/token-prices?timeRange=${timeRange}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        drawGraph(data);
+    } 
+    catch (error) {
+        console.error("Could not update graph: ", error);
+    }
 }
 
 function drawGraph(data) {

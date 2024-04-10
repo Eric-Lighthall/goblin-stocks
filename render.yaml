@@ -3,6 +3,7 @@ services:
     name: goblin-stocks
     env: node
     plan: free
+    buildCommand: npm install
     startCommand: node server.js
     envVars:
       - key: MONGODB_URI

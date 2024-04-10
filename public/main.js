@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 async function getTokenPrice() {
     try {
-        const response = await fetch("/token-prices");
+        const response = await fetch("https://goblin-stocks.onrender.com/token-prices");
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -19,7 +19,7 @@ async function getTokenPrice() {
 
 async function updateGraph(timeRange) {
     try {
-        const response = await fetch(`/token-prices?timeRange=${timeRange}`);
+        const response = await fetch(`https://goblin-stocks.onrender.com/token-prices?timeRange=${timeRange}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

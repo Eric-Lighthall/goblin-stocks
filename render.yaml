@@ -3,12 +3,14 @@ services:
     name: goblin-stocks
     env: node
     plan: free
-    buildCommand: npm install
     startCommand: node server.js
     envVars:
       - key: MONGODB_URI
         sync: false
+        fromGroup: bnetmongo
       - key: BNET_ID
         sync: false
+        fromGroup: bnetmongo
       - key: BNET_SECRET
         sync: false
+        fromGroup: bnetmongo

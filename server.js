@@ -4,10 +4,13 @@ const axios = require('axios');
 const { MongoClient, ServerApiVersion  } = require('mongodb');
 const moment = require('moment-timezone');
 const cron = require('node-cron');
+const cors = require('cors');
 
 const BNET_ID = process.env.BNET_ID;
 const BNET_SECRET = process.env.BNET_SECRET;
 const app = express();
+
+app.use(cors());
 
 let db,
       dbConnectionString = process.env.MONGODB_URI

@@ -5,3 +5,10 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: node server.js
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: BNET_ID
+        sync: false
+      - key: BNET_SECRET
+        sync: false

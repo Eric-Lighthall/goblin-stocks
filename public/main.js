@@ -1,4 +1,7 @@
-getTokenPrice();
+document.addEventListener('DOMContentLoaded', (event) => {
+    getTokenPrice();
+});
+
 async function getTokenPrice() {
     try {
         const response = await fetch("/token-prices");

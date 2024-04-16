@@ -37,12 +37,12 @@
         <h1>WoW Token Price Graph</h1>
         <svg id="chart"></svg>
         <div id="time-filters">
-            <button onclick="updateGraph('24h')">Past 24 Hours</button>
-            <button onclick="updateGraph('1w')">Past Week</button>
-            <button onclick="updateGraph('1m')">Past Month</button>
-            <button onclick="updateGraph('1y')">Past Year</button>
-            <button onclick="updateGraph('5y')">Past 5 Years</button>
-            <button onclick="updateGraph('all')">All Time</button>
+            <button data-time-range="12h">Past 12 Hours</button>
+            <button data-time-range="24h">Past 24 Hours</button>
+            <button data-time-range="1w">Past Week</button>
+            <button data-time-range="1m">Past Month</button>
+            <button data-time-range="1y">Past Year</button>
+            <button data-time-range="all">All Time</button>
         </div>        
         <div class="insights-section">
             <h2>Investing Insights</h2>

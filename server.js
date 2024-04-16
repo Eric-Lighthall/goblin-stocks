@@ -42,6 +42,10 @@ app.get('/token-prices', async (req, res) => {
       let startDate;
 
       switch (timeRange) {
+        case '12h':
+        startDate = currentDate.subtract(12, 'hours');
+        console.log('12 hours selected');
+          break;
         case '24h':
           startDate = currentDate.subtract(24, 'hours');
           console.log('24 hours selected');
@@ -88,44 +92,44 @@ app.get('/token-prices', async (req, res) => {
 });
 
 // Get token price from wow API
-cron.schedule('*/30 * * * *', async (req, res) => {
-    try {
-      const tokenResponse = await axios.post('https://oauth.battle.net/token', null, {
-        params: {
-          grant_type: 'client_credentials',
-        },
-        auth: {
-          username: BNET_ID,
-          password: BNET_SECRET,
-        },
-      });
+// cron.schedule('*/30 * * * *', async (req, res) => {
+//     try {
+//       const tokenResponse = await axios.post('https://oauth.battle.net/token', null, {
+//         params: {
+//           grant_type: 'client_credentials',
+//         },
+//         auth: {
+//           username: BNET_ID,
+//           password: BNET_SECRET,
+//         },
+//       });
   
-      const accessToken = tokenResponse.data.access_token;
+//       const accessToken = tokenResponse.data.access_token;
   
-      const apiResponse = await axios.get('https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us', {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
+//       const apiResponse = await axios.get('https://us.api.blizzard.com/data/wow/token/index?namespace=dynamic-us', {
+//         headers: {
+//           'Authorization': `Bearer ${accessToken}`,
+//         },
+//       });
   
-      const tokenPrice = Number(apiResponse.data.price) / 10000;
+//       const tokenPrice = Number(apiResponse.data.price) / 10000;
 
-    const currentDate = new Date();
-    const formattedTimestamp = currentDate.toISOString().slice(0, 16).replace('T', ' ');
+//     const currentDate = new Date();
+//     const formattedTimestamp = currentDate.toISOString().slice(0, 16).replace('T', ' ');
 
-      const collection = db.collection('tokenPrices');
-      await collection.insertOne({
-        timestamp: formattedTimestamp,
-        price: tokenPrice,
-      });
+//       const collection = db.collection('tokenPrices');
+//       await collection.insertOne({
+//         timestamp: formattedTimestamp,
+//         price: tokenPrice,
+//       });
 
-      console.log(`Token price updated at ${formattedTimestamp}: ${tokenPrice}`);
-    //   res.json({ price: tokenPrice})
-    } catch (error) {
-      console.error('Error:', error.message);
-    //   res.status(500).send('An error occurred while fetching the WoW token price.');
-    }
-  });
+//       console.log(`Token price updated at ${formattedTimestamp}: ${tokenPrice}`);
+//     //   res.json({ price: tokenPrice})
+//     } catch (error) {
+//       console.error('Error:', error.message);
+//     //   res.status(500).send('An error occurred while fetching the WoW token price.');
+//     }
+//   });
 
 
 const PORT = process.env.PORT || 3000;

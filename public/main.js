@@ -164,3 +164,17 @@ function mousemove(event, x, y, data, tooltip, svg) {
     .attr("x2", x(new Date(d.timestamp)))
     .attr("y2", y.range()[0]);
 }
+
+// Time filter button click event handler
+function handleTimeFilterClick(event) {
+    const buttons = document.querySelectorAll('#time-filters button');
+    buttons.forEach(button => button.classList.remove('active'));
+    event.target.classList.add('active');
+    console.log('hamd');
+    updateGraph(event.target.dataset.timeRange);
+}
+
+// Attach click event listeners to time filter buttons
+document.querySelectorAll('#time-filters button').forEach(button => {
+    button.addEventListener('click', handleTimeFilterClick);
+});

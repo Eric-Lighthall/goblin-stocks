@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener("DOMContentLoaded", (event) => {
     getTokenPrice();
 });
 
@@ -10,9 +10,8 @@ async function getTokenPrice() {
         }
         const data = await response.json();
         console.log(data);
-        drawGraph(data)
-    }
-    catch (error) {
+        drawGraph(data);
+    } catch (error) {
         console.error("Could not fetch token prices: ", error);
     }
 }
@@ -25,8 +24,7 @@ async function updateGraph(timeRange) {
         }
         const data = await response.json();
         drawGraph(data);
-    } 
-    catch (error) {
+    } catch (error) {
         console.error("Could not update graph: ", error);
     }
 }
@@ -136,22 +134,26 @@ function mousemove(event, x, y, data, tooltip, svg) {
     const tooltipX = x(new Date(d.timestamp)) + svgRect.left - tooltipWidth / 4;
     const tooltipY = y(d.price) + svgRect.top - 10;
 
-    tooltip.html(`
+    tooltip
+        .html(
+            `
         <div class="tooltip-content">
             <div class="price-container">
                 <span>Price: ${d.price}</span>
                 <img src="images/coin-gold.png" alt="WoW Gold" class="gold-icon">
             </div>
-            <span>Date: ${moment(d.timestamp).format('YYYY-MM-DD hh:mm A')}</span>
+            <span>Date: ${moment(d.timestamp).format("YYYY-MM-DD hh:mm A")}</span>
         </div>
-    `)
-    .style("left", `${tooltipX}px`)
-    .style("top", `${tooltipY - 70}px`);
+    `
+        )
+        .style("left", `${tooltipX}px`)
+        .style("top", `${tooltipY - 70}px`);
 
     // Create or update the vertical line
     let verticalLine = svg.select(".vertical-line");
     if (verticalLine.empty()) {
-        verticalLine = svg.append("line")
+        verticalLine = svg
+            .append("line")
             .attr("class", "vertical-line")
             .attr("stroke", "white")
             .attr("stroke-width", 1)
@@ -159,21 +161,21 @@ function mousemove(event, x, y, data, tooltip, svg) {
     }
 
     verticalLine
-    .attr("x1", x(new Date(d.timestamp)))
-    .attr("y1", y(d.price))
-    .attr("x2", x(new Date(d.timestamp)))
-    .attr("y2", y.range()[0]);
+        .attr("x1", x(new Date(d.timestamp)))
+        .attr("y1", y(d.price))
+        .attr("x2", x(new Date(d.timestamp)))
+        .attr("y2", y.range()[0]);
 }
 
 // Time filter button click event handler
 function handleTimeFilterClick(event) {
-    const buttons = document.querySelectorAll('#time-filters button');
-    buttons.forEach(button => button.classList.remove('active'));
-    event.target.classList.add('active');
+    const buttons = document.querySelectorAll("#time-filters button");
+    buttons.forEach((button) => button.classList.remove("active"));
+    event.target.classList.add("active");
     updateGraph(event.target.dataset.timeRange);
 }
 
 // Attach click event listeners to time filter buttons
-document.querySelectorAll('#time-filters button').forEach(button => {
-    button.addEventListener('click', handleTimeFilterClick);
+document.querySelectorAll("#time-filters button").forEach((button) => {
+    button.addEventListener("click", handleTimeFilterClick);
 });

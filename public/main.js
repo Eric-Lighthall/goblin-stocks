@@ -170,7 +170,6 @@ function handleTimeFilterClick(event) {
     const buttons = document.querySelectorAll('#time-filters button');
     buttons.forEach(button => button.classList.remove('active'));
     event.target.classList.add('active');
-    console.log('hamd');
     updateGraph(event.target.dataset.timeRange);
 }
 

@@ -100,11 +100,11 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@EricLighthall](https://twitter.com/EricLighthall) - ericlighthall2@gmail.com
+[@EricLighthall](https://twitter.com/EricLighthall) - ericlighthall2@gmail.com
 
-Project Link: [https://github.com/Eric-Lighthall/goblin-stocks](https://github.com/Eric-Lighthall/goblin-stocks)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+[https://github.com/Eric-Lighthall/goblin-stocks](https://github.com/Eric-Lighthall/goblin-stocks)
+<br>
+<p align="center"><a href="#readme-top">back to top</a></p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

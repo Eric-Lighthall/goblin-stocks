@@ -12,8 +12,9 @@
 
   <p align="center">
     Goblin Stock is a web service that provides both real-time and historical data on World of Warcraft token prices. It enables players and market analysts to track price fluctuations and trends, helping them make informed decisions in the game's economy.
-    <br />
-    <a href="https://github.com/Eric-Lighthall/goblin-stocks">View Demo</a>
+    <br>
+    <br>
+    <a href="https://goblin-stocks-lh8n.onrender.com/" target="_blank">View Demo</a>
     ·
     <a href="https://github.com/Eric-Lighthall/goblin-stocks/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·

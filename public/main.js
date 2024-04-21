@@ -34,7 +34,7 @@ function drawGraph(data) {
     d3.select("#chart").selectAll("*").remove();
 
     // Set up the dimensions and margins of the graph
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+    const margin = { top: 20, right: 20, bottom: 30, left: 70 };
     const width = 960 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
@@ -179,3 +179,5 @@ function handleTimeFilterClick(event) {
 document.querySelectorAll("#time-filters button").forEach((button) => {
     button.addEventListener("click", handleTimeFilterClick);
 });
+
+document.querySelector("[data-time-range='24h']").classList.add("active");

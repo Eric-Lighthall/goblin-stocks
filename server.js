@@ -33,22 +33,20 @@ app.get("/", (req, res) => {
 app.get("/token-prices", async (req, res) => {
     try {
         const clientTimezone = moment.tz.guess();
-        const { timeRange } = req.query;
+        const { timeRange = "24h" } = req.query; // Default to "24h" if timeRange is not specified
 
         let query = {};
+        const currentDate = moment();
+        let startDate = currentDate.subtract(24, "hours"); // Default startDate
 
         if (timeRange) {
-            const currentDate = moment();
-            let startDate;
 
             switch (timeRange) {
                 case "12h":
                     startDate = currentDate.subtract(12, "hours");
-                    console.log("12 hours selected");
                     break;
                 case "24h":
                     startDate = currentDate.subtract(24, "hours");
-                    console.log("24 hours selected");
                     break;
                 case "1w":
                     startDate = currentDate.subtract(1, "week");

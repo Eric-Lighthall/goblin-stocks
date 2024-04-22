@@ -30,23 +30,24 @@ app.get("/", (req, res) => {
 });
 
 // Get token prices from mongodb
-app.get("/token-prices", async (req, res) => {
+app.get("/graph-data", async (req, res) => {
     try {
         const clientTimezone = moment.tz.guess();
-        const { timeRange = "24h" } = req.query; // Default to "24h" if timeRange is not specified
+        const { timeRange = "24h", includeTrends = false } = req.query;
 
         let query = {};
         const currentDate = moment();
-        let startDate = currentDate.subtract(24, "hours"); // Default startDate
 
         if (timeRange) {
-
+            let startDate;
             switch (timeRange) {
                 case "12h":
                     startDate = currentDate.subtract(12, "hours");
+                    console.log('past 12 hours selected');
                     break;
                 case "24h":
                     startDate = currentDate.subtract(24, "hours");
+                    console.log('past 24 hours selected');
                     break;
                 case "1w":
                     startDate = currentDate.subtract(1, "week");
@@ -72,23 +73,22 @@ app.get("/token-prices", async (req, res) => {
             }
         }
 
-        const collection = await db
+        const prices = await db
             .collection("tokenPrices")
             .find(query)
             .sort({ timestamp: -1 })
             .toArray();
 
-        const localPrices = collection.map((price) => {
+        const formattedPrices  = prices.map((price) => {
             const utcDate = moment.utc(price.timestamp, "YYYY-MM-DD HH:mm");
             const localDate = utcDate.tz(clientTimezone);
-            const formattedTimestamp = localDate.toISOString();
             return {
                 ...price,
-                timestamp: formattedTimestamp,
+                timestamp: localDate.toISOString(),
             };
         });
 
-        res.json(localPrices);
+        res.json(formattedPrices);
     } catch (error) {
         console.error("Error:", error.message);
         res.status(500).send(
@@ -96,6 +96,65 @@ app.get("/token-prices", async (req, res) => {
         );
     }
 });
+
+app.get("/trend-data", async (req, res) => {
+    const clientTimezone = moment.tz.guess();
+    const maxPeriod = moment().subtract(1, 'months'); // Always fetch data for the past month
+
+    const query = { timestamp: { $gte: maxPeriod.format("YYYY-MM-DD HH:mm") } };
+    const prices = await db.collection("tokenPrices").find(query).sort({ timestamp: -1 }).toArray();
+    const formattedPrices = prices.map(price => {
+        const utcDate = moment.utc(price.timestamp, "YYYY-MM-DD HH:mm");
+        const localDate = utcDate.tz(clientTimezone);
+        return { ...price, timestamp: localDate.toISOString() };
+    });
+
+    const trendData = calculateTrends(formattedPrices);
+    res.json({ trends: trendData });
+});
+
+
+// Calculate trends for given time ranges
+function calculateTrends(prices) {
+    const currentDate = moment().startOf('day');  // Set reference to the start of the current day for consistent day-end calculations
+    let trends = {};
+
+    const periods = {
+        '1d': { number: 1, period: 'days' },
+        '1w': { number: 7, period: 'days' },  // Using 7 days explicitly for clarity
+        '1m': { number: 1, period: 'months' }
+    };
+
+    for (let key in periods) {
+        const { number, period } = periods[key];
+        const pastDate = currentDate.clone().subtract(number, period).startOf('day'); // Ensure comparisons ignore time of day
+
+        const relevantPrices = prices.filter(price => {
+            const priceDate = moment(price.timestamp);
+            return priceDate.isSameOrAfter(pastDate);
+        });
+
+        if (relevantPrices.length) {
+            const high = Math.max(...relevantPrices.map(p => p.price));
+            const low = Math.min(...relevantPrices.map(p => p.price));
+            const startPrice = relevantPrices[0].price;
+            const endPrice = relevantPrices[relevantPrices.length - 1].price;
+            const percentChange = ((startPrice - endPrice) / endPrice) * 100;
+            trends[key] = {
+                high,
+                low,
+                percentChange: percentChange.toFixed(2) + '%'
+            };
+        } else {
+            trends[key] = { high: null, low: null, percentChange: 'No data' };
+        }
+    }
+
+    return trends;
+}
+
+
+
 
 // Get token price from wow API
 if (process.env.NODE_ENV === "production") {

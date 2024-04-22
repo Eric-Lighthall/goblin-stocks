@@ -1,18 +1,24 @@
+:root {
+    --background-gradient-start: #191D25;
+    --background-gradient-end: #14171F;
+    --graph-background: #101318;
+}
+
 /* General styles */
 body, html {
-    font-family: Arial, sans-serif;
+    font-family: "Roboto", Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #1c1c1c;
+    background-image: linear-gradient(to bottom, var(--background-gradient-start), var(--background-gradient-end));
     color: #fff;
 }
 
 /* Header and Navigation */
 header {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
     width: 100%;
-    margin-bottom: 20px;
-    background-color: #333;
+    margin-bottom: 40px;
+    background-color: #12151B;
 }
 
 .navbar {
@@ -52,7 +58,10 @@ header {
 
 /* Main Content */
 .container {
-    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -65,6 +74,22 @@ h1 {
 }
 
 /* Graph Styles */
+#chart {
+    font-weight: bold;
+}
+
+#chart-area {
+    background-color: var(--graph-background);
+    box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+#chart-area h1 {
+    margin: 20px 0;
+}
+
 .axis path,
 .axis line {
     fill: none;
@@ -182,17 +207,19 @@ h1 {
 }
 
 #time-filters button {
-    margin: 5px;
+    font-weight: bold;
+    margin: 10px;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #242a36;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 #time-filters button:hover {
-    background-color: #45a049;
+    background-color: #6bb2ff;
 }
 
 #time-filters button:focus {
@@ -200,8 +227,9 @@ h1 {
 }
 
 #time-filters button.active {
-    background-color: #45a049;
-    box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.7);
+    background-color: #007BFF;
+    color: #ffffff;
+    border-color: #007bff;
 }
 
 /* FAQ Section */

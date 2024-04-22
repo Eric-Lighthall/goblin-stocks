@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goblin Stocks</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="reset.css">
@@ -34,16 +37,24 @@
         </nav>
     </header>
     <div class="container">
-        <h1>WoW Token Price Graph</h1>
-        <svg id="chart"></svg>
-        <div id="time-filters">
-            <button data-time-range="12h">Past 12 Hours</button>
-            <button data-time-range="24h">Past 24 Hours</button>
-            <button data-time-range="1w">Past Week</button>
-            <button data-time-range="1m">Past Month</button>
-            <button data-time-range="1y">Past Year</button>
-            <button data-time-range="all">All Time</button>
-        </div>        
+        <div id="chart-area">
+            <h1>WoW Token Price Graph</h1>
+            <svg id="chart"></svg>
+            <div id="time-filters">
+                <button data-time-range="12h">Past 12 Hours</button>
+                <button data-time-range="24h">Past 24 Hours</button>
+                <button data-time-range="1w">Past Week</button>
+                <button data-time-range="1m">Past Month</button>
+                <button data-time-range="1y">Past Year</button>
+                <button data-time-range="all">All Time</button>
+            </div>  
+        </div>
+        <div id="current-trends">
+            <h1>Current Trends</h1>
+            <div id="trend-details">
+                
+            </div>
+        </div>     
         <div class="insights-section">
             <h2>Investing Insights</h2>
             <p><strong>Best Days to Buy and Sell:</strong> Typically, prices fluctuate based on game updates, player engagement levels, and time of year. Historically, prices have been lower during early weekdays and higher on weekends.</p>

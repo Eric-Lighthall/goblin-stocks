@@ -1,10 +1,6 @@
-document.addEventListener("DOMContentLoaded", (event) => {
-    getTokenPrice();
-});
-
 async function getTokenPrice() {
     try {
-        const response = await fetch("/token-prices");
+        const response = await fetch("/graph-data");
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -18,11 +14,12 @@ async function getTokenPrice() {
 
 async function updateGraph(timeRange) {
     try {
-        const response = await fetch(`/token-prices?timeRange=${timeRange}`);
+        const response = await fetch(`/graph-data?timeRange=${timeRange}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log("Received data:", data);
         drawGraph(data);
     } catch (error) {
         console.error("Could not update graph: ", error);
@@ -35,8 +32,8 @@ function drawGraph(data) {
 
     // Set up the dimensions and margins of the graph
     const margin = { top: 20, right: 20, bottom: 30, left: 70 };
-    const width = 960 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const width = 1400 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
 
     // Append an SVG element to the body
     const svg = d3
@@ -175,9 +172,30 @@ function handleTimeFilterClick(event) {
     updateGraph(event.target.dataset.timeRange);
 }
 
+async function fetchAndDisplayTrends() {
+    const response = await fetch("/trend-data");
+    const data = await response.json();
+    updateTrendDisplay(data.trends);
+}
+
+function updateTrendDisplay(trends) {
+    const trendContainer = document.getElementById("trend-details");
+    trendContainer.innerHTML = Object.keys(trends).map(range => `
+        <div>
+            <h3>${range.toUpperCase()}</h3>
+            <p>High: ${trends[range].high} | Low: ${trends[range].low} | Change: ${trends[range].percentChange}</p>
+        </div>
+    `).join("");
+}
+
 // Attach click event listeners to time filter buttons
 document.querySelectorAll("#time-filters button").forEach((button) => {
     button.addEventListener("click", handleTimeFilterClick);
 });
 
 document.querySelector("[data-time-range='24h']").classList.add("active");
+
+document.addEventListener("DOMContentLoaded", () => {
+    getTokenPrice();
+    fetchAndDisplayTrends();
+});

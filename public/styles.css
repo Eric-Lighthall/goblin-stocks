@@ -155,6 +155,14 @@ h1 {
     stroke-dasharray: 3 3;
 }
 
+.text-green {
+    color: green;
+}
+
+.text-red {
+    color: red;
+}
+
 /* Insights Section */
 .insights-section {
     margin-top: 20px;

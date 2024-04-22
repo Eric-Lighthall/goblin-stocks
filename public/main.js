@@ -180,13 +180,23 @@ async function fetchAndDisplayTrends() {
 
 function updateTrendDisplay(trends) {
     const trendContainer = document.getElementById("trend-details");
-    trendContainer.innerHTML = Object.keys(trends).map(range => `
-        <div>
-            <h3>${range.toUpperCase()}</h3>
-            <p>High: ${trends[range].high} | Low: ${trends[range].low} | Change: ${trends[range].percentChange}</p>
-        </div>
-    `).join("");
+    trendContainer.innerHTML = Object.keys(trends).map(range => {
+        const trend = trends[range];
+        // Check if the percentage change is positive and prepend a '+' sign if it is
+        const percentChangeText = parseFloat(trend.percentChange) > 0 ? '+' + trend.percentChange : trend.percentChange;
+        const colorClass = parseFloat(trend.percentChange) > 0 ? 'text-green' : 'text-red';
+        return `
+            <div>
+                <h3>${range.toUpperCase()}</h3>
+                <p>High: ${trend.high} | Low: ${trend.low} | 
+                    Change: <span class="${colorClass}">${percentChangeText}</span>
+                </p>
+            </div>
+        `;
+    }).join("");
 }
+
+
 
 // Attach click event listeners to time filter buttons
 document.querySelectorAll("#time-filters button").forEach((button) => {

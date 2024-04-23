@@ -54,7 +54,7 @@ app.get("/graph-data", async (req, res) => {
         const { timeRange = "24h", includeTrends = false } = req.query;
 
         let query = {};
-        const currentDate = moment();
+        const currentDate = moment.utc();
 
         if (timeRange) {
             let startDate;
@@ -148,12 +148,29 @@ function calculateTrends(prices) {
     };
 
     for (let key in periods) {
-        const { number, period } = periods[key];
-        const pastDate = moment.utc().startOf(period).subtract(number, period);
+        let pastDate;
 
-        console.log(`Calculating trend for ${key} period`);
-        console.log("Current date:", currentDate.format());
-        console.log("Past date:", pastDate.format());
+        if (key === "30m") {
+            // Find the timestamp of the last price change more than 30 minutes ago
+            pastDate = prices.find((price) => {
+                const priceDate = moment.utc(price.timestamp);
+                return currentDate.diff(priceDate, "minutes") >= 30;
+            })?.timestamp;
+
+            if (!pastDate) {
+                // If no price change found within 30 minutes, use the oldest available price
+                pastDate = prices[prices.length - 1].timestamp;
+            }
+
+            pastDate = moment.utc(pastDate);
+        } else {
+            const { number, period } = periods[key];
+            pastDate = moment.utc().subtract(number, period);
+        }
+
+        // console.log(`Calculating trend for ${key} period`);
+        // console.log("Current date:", currentDate.format());
+        // console.log("Past date:", pastDate.format());
 
         const relevantPrices = prices.filter((price) => {
             const priceDate = moment.utc(price.timestamp);
@@ -169,9 +186,9 @@ function calculateTrends(prices) {
                 current: currentPrice,
                 percentChange: percentChange.toFixed(2) + "%",
             };
-            console.log("Start price:", startPrice);
-            console.log("Current price:", currentPrice);
-            console.log("Percent change:", percentChange);
+            // console.log("Start price:", startPrice);
+            // console.log("Current price:", currentPrice);
+            // console.log("Percent change:", percentChange);
         } else {
             trends[key] = {
                 high: null,

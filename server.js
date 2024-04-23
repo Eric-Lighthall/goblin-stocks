@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+// const { MongoClient, ServerApiVersion } = require("mongodb");
 const moment = require("moment-timezone");
 const cron = require("node-cron");
 const cors = require("cors");
+const db = require("./db.js");
 
 const BNET_ID = process.env.BNET_ID;
 const BNET_SECRET = process.env.BNET_SECRET;
@@ -12,22 +13,39 @@ const app = express();
 
 app.use(cors());
 
-let db,
-    dbConnectionString = process.env.MONGODB_URI;
-dbName = "WoWTokenData";
+// let db,
+//     dbConnectionString = process.env.MONGODB_URI;
+// dbName = "WoWTokenData";
 
-MongoClient.connect(dbConnectionString, { useUnifiedTopology: true }).then(
-    (client) => {
-        console.log(`Connected to ${dbName} Database`);
-        db = client.db(dbName);
-    }
-);
+// MongoClient.connect(dbConnectionString, { useUnifiedTopology: true }).then(
+//     (client) => {
+//         console.log(`Connected to ${dbName} Database`);
+//         db = client.db(dbName);
+//     }
+// );
 
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+const PORT = process.env.PORT || 3000;
+db.connectToServer(function (err) {
+    if (err) {
+        console.error("Error connecting to MongoDB", err);
+        process.exit(1);
+    }
+
+    console.log("Connected to DB, setting up server...");
+    startServer();
 });
+
+function startServer() {
+    app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}`);
+    });
+    
+    app.get("/", (req, res) => {
+        res.sendFile(__dirname + "/index.html");
+    });
+}
 
 // Get token prices from mongodb
 app.get("/graph-data", async (req, res) => {
@@ -43,11 +61,11 @@ app.get("/graph-data", async (req, res) => {
             switch (timeRange) {
                 case "12h":
                     startDate = currentDate.subtract(12, "hours");
-                    console.log('past 12 hours selected');
+                    console.log("past 12 hours selected");
                     break;
                 case "24h":
                     startDate = currentDate.subtract(24, "hours");
-                    console.log('past 24 hours selected');
+                    console.log("past 24 hours selected");
                     break;
                 case "1w":
                     startDate = currentDate.subtract(1, "week");
@@ -73,13 +91,14 @@ app.get("/graph-data", async (req, res) => {
             }
         }
 
-        const prices = await db
+        const dbConnection = db.getDb();
+        const prices = await dbConnection
             .collection("tokenPrices")
             .find(query)
             .sort({ timestamp: -1 })
             .toArray();
 
-        const formattedPrices  = prices.map((price) => {
+        const formattedPrices = prices.map((price) => {
             const utcDate = moment.utc(price.timestamp, "YYYY-MM-DD HH:mm");
             const localDate = utcDate.tz(clientTimezone);
             return {
@@ -99,11 +118,20 @@ app.get("/graph-data", async (req, res) => {
 
 app.get("/trend-data", async (req, res) => {
     const clientTimezone = moment.tz.guess();
-    const maxPeriod = moment().subtract(1, 'months'); // Always fetch data for the past month
+    const maxPeriod = moment().subtract(1, "months"); // Always fetch data for the past month
 
-    const query = { timestamp: { $gte: maxPeriod.format("YYYY-MM-DD HH:mm") } };
-    const prices = await db.collection("tokenPrices").find(query).sort({ timestamp: -1 }).toArray();
-    const formattedPrices = prices.map(price => {
+    const query = {
+        timestamp: { $gte: maxPeriod.format("YYYY-MM-DD HH:mm") },
+    };
+
+    const dbConnection = db.getDb();
+    const prices = await dbConnection
+        .collection("tokenPrices")
+        .find(query)
+        .sort({ timestamp: -1 })
+        .toArray();
+
+    const formattedPrices = prices.map((price) => {
         const utcDate = moment.utc(price.timestamp, "YYYY-MM-DD HH:mm");
         const localDate = utcDate.tz(clientTimezone);
         return { ...price, timestamp: localDate.toISOString() };
@@ -113,49 +141,52 @@ app.get("/trend-data", async (req, res) => {
     res.json({ trends: trendData });
 });
 
-
 // Calculate trends for given time ranges
 function calculateTrends(prices) {
-    const currentDate = moment().startOf('day');
+    const currentDate = moment().startOf("day");
     let trends = {};
 
     const periods = {
-        '30m': { number: 30, period: 'minutes' },
-        '1d': { number: 1, period: 'days' },
-        '1w': { number: 7, period: 'days' },
-        '1m': { number: 1, period: 'months' }
+        "30m": { number: 30, period: "minutes" },
+        "1d": { number: 1, period: "days" },
+        "1w": { number: 7, period: "days" },
+        "1m": { number: 1, period: "months" },
     };
 
     for (let key in periods) {
         const { number, period } = periods[key];
-        const pastDate = currentDate.clone().subtract(number, period).startOf('day'); // Ensure comparisons ignore time of day
+        const pastDate = currentDate
+            .clone()
+            .subtract(number, period)
+            .startOf("day"); // Ensure comparisons ignore time of day
 
-        const relevantPrices = prices.filter(price => {
+        const relevantPrices = prices.filter((price) => {
             const priceDate = moment(price.timestamp);
             return priceDate.isSameOrAfter(pastDate);
         });
 
         if (relevantPrices.length) {
-            const high = Math.max(...relevantPrices.map(p => p.price));
-            const low = Math.min(...relevantPrices.map(p => p.price));
+            const high = Math.max(...relevantPrices.map((p) => p.price));
+            const low = Math.min(...relevantPrices.map((p) => p.price));
             const startPrice = relevantPrices[0].price;
             const endPrice = relevantPrices[relevantPrices.length - 1].price;
             const percentChange = ((startPrice - endPrice) / endPrice) * 100;
             trends[key] = {
                 high,
                 low,
-                percentChange: percentChange.toFixed(2) + '%'
+                percentChange: percentChange.toFixed(2) + "%",
             };
         } else {
-            trends[key] = { high: null, low: null, percentChange: 'No data' };
+            trends[key] = {
+                high: null,
+                low: null,
+                percentChange: "No data",
+            };
         }
     }
 
     return trends;
 }
-
-
-
 
 // Get token price from wow API
 if (process.env.NODE_ENV === "production") {
@@ -210,8 +241,3 @@ if (process.env.NODE_ENV === "production") {
         }
     });
 }
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
-});

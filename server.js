@@ -225,7 +225,8 @@ if (process.env.NODE_ENV === "production") {
                 .slice(0, 16)
                 .replace("T", " ");
 
-            const collection = db.collection("tokenPrices");
+            const dbConnection = db.getDb();
+            const collection = dbConnection.collection("tokenPrices");
             await collection.insertOne({
                 timestamp: formattedTimestamp,
                 price: tokenPrice,

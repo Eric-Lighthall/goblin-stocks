@@ -182,19 +182,19 @@ function updateTrendDisplay(trends) {
     const trendContainer = document.getElementById("trend-details");
     trendContainer.innerHTML = Object.keys(trends).map(range => {
         const trend = trends[range];
-        // Check if the percentage change is positive and prepend a '+' sign if it is
-        const percentChangeText = parseFloat(trend.percentChange) > 0 ? '+' + trend.percentChange : trend.percentChange;
+        const percentChangeText = parseFloat(trend.percentChange) > 0 ? `+${trend.percentChange}` : trend.percentChange;
         const colorClass = parseFloat(trend.percentChange) > 0 ? 'text-green' : 'text-red';
         return `
-            <div>
-                <h3>${range.toUpperCase()}</h3>
-                <p>High: ${trend.high} | Low: ${trend.low} | 
-                    Change: <span class="${colorClass}">${percentChangeText}</span>
-                </p>
+            <div class="trend-row">
+                <h3 class="trend-title">${range.toUpperCase()}</h3>
+                <p>High: <span class="trend-high">${trend.high}</span></p>
+                <p>Low: <span class="trend-low">${trend.low}</span></p>
+                <p>Change: <span class="${colorClass}">${percentChangeText}</span></p>
             </div>
         `;
     }).join("");
 }
+
 
 
 

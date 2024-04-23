@@ -157,15 +157,27 @@ h1 {
 
 /* Trend Section */
 
+#current-trends {
+    width: 100%;
+    padding: 20px 0;
+}
+
+#current-trends h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
 #trend-details {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    font-size: 1.2em;
 }
 
 .trend-row {
     display: flex;
-    justify-content: start;
+    justify-content: space-evenly;
     align-items: center;
     border-bottom: 1px solid #878787;
     margin-bottom: 10px;
@@ -176,15 +188,11 @@ h1 {
 }
 
 .trend-row span, .trend-row h3 {
+    text-align: left;
     font-size: 1em;
-    margin-right: 10px;
 }
 
-.trend-title {
-    font-weight: bold;
-}
-
-.text-green, .text-red {
+.text-green, .text-red, .trend-title {
     font-weight: bold;
 }
 

@@ -187,8 +187,8 @@ function updateTrendDisplay(trends) {
         return `
             <div class="trend-row">
                 <h3 class="trend-title">${range.toUpperCase()}</h3>
-                <p>High: <span class="trend-high">${trend.high}</span></p>
-                <p>Low: <span class="trend-low">${trend.low}</span></p>
+                <p>Start: <span class="trend-start">${trend.start}</span></p>
+                <p>Current: <span class="trend-current">${trend.current}</span></p>
                 <p>Change: <span class="${colorClass}">${percentChangeText}</span></p>
             </div>
         `;

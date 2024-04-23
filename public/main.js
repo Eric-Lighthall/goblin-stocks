@@ -5,7 +5,7 @@ async function getTokenPrice() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
+        displayUpdateTimeDetails(data);
         drawGraph(data);
     } catch (error) {
         console.error("Could not fetch token prices: ", error);
@@ -195,6 +195,27 @@ function updateTrendDisplay(trends) {
     }).join("");
 }
 
+function displayUpdateTimeDetails(data) {
+    // Assuming the last entry in the data array is the most recent update
+    const lastUpdateTimestamp = new Date(data[0].timestamp);
+    const now = new Date();
+
+    const lastUpdateFormatted = lastUpdateTimestamp.toLocaleString("en-US", { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+
+    // Calculate the difference in minutes
+    const diffMinutes = Math.round((now - lastUpdateTimestamp) / 60000);
+    const timeUntilNextUpdate = 30 - (diffMinutes % 30); // Time until the next 30-minute interval
+
+    // Display the times in the HTML
+    document.getElementById("last-update").innerText = `Last update: ${lastUpdateFormatted}`;
+    document.getElementById("time-until-next-update").innerText = `Time until next update: ${timeUntilNextUpdate} minutes`;
+}
 
 
 

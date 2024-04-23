@@ -116,12 +116,13 @@ app.get("/trend-data", async (req, res) => {
 
 // Calculate trends for given time ranges
 function calculateTrends(prices) {
-    const currentDate = moment().startOf('day');  // Set reference to the start of the current day for consistent day-end calculations
+    const currentDate = moment().startOf('day');
     let trends = {};
 
     const periods = {
+        '30m': { number: 30, period: 'minutes' },
         '1d': { number: 1, period: 'days' },
-        '1w': { number: 7, period: 'days' },  // Using 7 days explicitly for clarity
+        '1w': { number: 7, period: 'days' },
         '1m': { number: 1, period: 'months' }
     };
 

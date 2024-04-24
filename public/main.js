@@ -1,12 +1,13 @@
+let tokenPriceData = [];
 async function getTokenPrice() {
     try {
         const response = await fetch("/graph-data");
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        displayUpdateTimeDetails(data);
-        drawGraph(data);
+        tokenPriceData = await response.json();
+        displayUpdateTimeDetails(tokenPriceData);
+        drawGraph(tokenPriceData);
     } catch (error) {
         console.error("Could not fetch token prices: ", error);
     }
@@ -30,15 +31,19 @@ function drawGraph(data) {
     // Clear the existing graph
     d3.select("#chart").selectAll("*").remove();
 
+    const containerWidth = d3.select(".chart-area").node().getBoundingClientRect().width;
+
+    const aspectRatio = 600 / 1400;
+    const height = containerWidth * aspectRatio;
+
     // Set up the dimensions and margins of the graph
-    const margin = { top: 20, right: 20, bottom: 30, left: 70 };
-    const width = 1400 - margin.left - margin.right;
-    const height = 600 - margin.top - margin.bottom;
+    const margin = { top: 20, right: 100, bottom: 30, left: 70 };
+    const width = containerWidth - margin.left - margin.right;
 
     // Append an SVG element to the body
     const svg = d3
         .select("#chart")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", containerWidth)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
@@ -180,19 +185,29 @@ async function fetchAndDisplayTrends() {
 
 function updateTrendDisplay(trends) {
     const trendContainer = document.getElementById("trend-details");
-    trendContainer.innerHTML = Object.keys(trends).map(range => {
-        const trend = trends[range];
-        const percentChangeText = parseFloat(trend.percentChange) > 0 ? `+${trend.percentChange}` : trend.percentChange;
-        const colorClass = parseFloat(trend.percentChange) > 0 ? 'text-green' : 'text-red';
-        return `
+    trendContainer.innerHTML = Object.keys(trends)
+        .map((range) => {
+            const trend = trends[range];
+            const percentChangeText =
+                parseFloat(trend.percentChange) > 0
+                    ? `+${trend.percentChange}`
+                    : trend.percentChange;
+            const colorClass =
+                parseFloat(trend.percentChange) > 0 ? "text-green" : "text-red";
+
+            if (range === '30m') {
+                updateRecommendations(parseFloat(trend.percentChange));
+            }
+            return `
             <div class="trend-row">
                 <h3 class="trend-title">${range.toUpperCase()}</h3>
-                <p>High: <span class="trend-high">${trend.high}</span></p>
-                <p>Low: <span class="trend-low">${trend.low}</span></p>
+                <p>Start: <span class="trend-start">${trend.start}</span></p>
+                <p>Current: <span class="trend-current">${trend.current}</span></p>
                 <p>Change: <span class="${colorClass}">${percentChangeText}</span></p>
             </div>
         `;
-    }).join("");
+        })
+        .join("");
 }
 
 function displayUpdateTimeDetails(data) {
@@ -200,12 +215,12 @@ function displayUpdateTimeDetails(data) {
     const lastUpdateTimestamp = new Date(data[0].timestamp);
     const now = new Date();
 
-    const lastUpdateFormatted = lastUpdateTimestamp.toLocaleString("en-US", { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+    const lastUpdateFormatted = lastUpdateTimestamp.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
     });
 
     // Calculate the difference in minutes
@@ -213,11 +228,48 @@ function displayUpdateTimeDetails(data) {
     const timeUntilNextUpdate = 30 - (diffMinutes % 30); // Time until the next 30-minute interval
 
     // Display the times in the HTML
-    document.getElementById("last-update").innerText = `Last update: ${lastUpdateFormatted}`;
-    document.getElementById("time-until-next-update").innerText = `Time until next update: ${timeUntilNextUpdate} minutes`;
+    document.getElementById("last-update").innerText =
+        `Last update: ${lastUpdateFormatted}`;
+    document.getElementById("time-until-next-update").innerText =
+        `Time until next update: ${timeUntilNextUpdate} minutes`;
 }
 
+function updateRecommendations(percentChange) {
+    const sellRecommendationElement = document.getElementById(
+        "sell-recommendation"
+    );
+    const buyRecommendationElement =
+        document.getElementById("buy-recommendation");
 
+    let sellRecommendation = "Wait";
+    let buyRecommendation = "Wait";
+
+    console.log(percentChange);
+
+    if (percentChange < -0.3) {
+        sellRecommendation = "Sell";
+    } else if (percentChange > 0.3) {
+        buyRecommendation = "Buy";
+    }
+
+    sellRecommendationElement.textContent = sellRecommendation;
+    buyRecommendationElement.textContent = buyRecommendation;
+
+    sellRecommendationElement.classList.remove("text-red", "text-green");
+    buyRecommendationElement.classList.remove("text-red", "text-green");
+  
+    if (sellRecommendation === "Wait") {
+      sellRecommendationElement.classList.add("text-red");
+    } else if (sellRecommendation === "Sell") {
+      sellRecommendationElement.classList.add("text-green");
+    }
+  
+    if (buyRecommendation === "Wait") {
+      buyRecommendationElement.classList.add("text-red");
+    } else if (buyRecommendation === "Buy") {
+      buyRecommendationElement.classList.add("text-green");
+    }
+}
 
 // Attach click event listeners to time filter buttons
 document.querySelectorAll("#time-filters button").forEach((button) => {
@@ -229,4 +281,8 @@ document.querySelector("[data-time-range='24h']").classList.add("active");
 document.addEventListener("DOMContentLoaded", () => {
     getTokenPrice();
     fetchAndDisplayTrends();
+});
+
+window.addEventListener("resize", () => {
+    drawGraph(tokenPriceData);
 });

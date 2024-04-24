@@ -78,12 +78,13 @@ h1 {
     font-weight: bold;
 }
 
-#chart-area {
+.chart-area {
     background-color: var(--graph-background);
     box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 #chart-area h1 {
@@ -156,7 +157,6 @@ h1 {
 }
 
 /* Trend Section */
-
 #current-trends {
     width: 100%;
     padding: 20px 0;
@@ -204,28 +204,28 @@ h1 {
     color: red;
 }
 
-/* Insights Section */
-.insights-section {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #2a2a2a;
+/* Recommendations */
+#recommendation {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 40px
 }
 
-.insights-section h2 {
-    color: white;
+#recommendation h2 {
+    margin-bottom: 20px;
 }
 
-.insights-section p {
-    background-color: #444;
-    border-left: 5px solid #4caf50;
-    padding: 10px;
-    margin: 10px 0;
-    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-    border-radius: 5px;
-    color: #fff;
-    font-size: 16px;
-    line-height: 1.6;
+#recommendation p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+}
+
+#recommendation span {
+    font-size: 1.7rem;
 }
 
 /* About Section */
@@ -349,4 +349,16 @@ h1 {
     padding: 12px 15px;
     font-size: 14px;
     line-height: 1.6;
+}
+
+#data-disclaimer {
+    padding: 10px;
+    background-color: var(--graph-background);
+}
+
+#data-disclaimer p {
+    margin: 0;
+    font-size: 14px;
+    color: #8c97a0;
+    text-align: center;
 }

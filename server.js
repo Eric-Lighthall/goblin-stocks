@@ -54,7 +54,7 @@ app.get("/graph-data", async (req, res) => {
         const { timeRange = "24h", includeTrends = false } = req.query;
 
         let query = {};
-        const currentDate = moment();
+        const currentDate = moment.utc();
 
         if (timeRange) {
             let startDate;
@@ -131,19 +131,13 @@ app.get("/trend-data", async (req, res) => {
         .sort({ timestamp: -1 })
         .toArray();
 
-    const formattedPrices = prices.map((price) => {
-        const utcDate = moment.utc(price.timestamp, "YYYY-MM-DD HH:mm");
-        const localDate = utcDate.tz(clientTimezone);
-        return { ...price, timestamp: localDate.toISOString() };
-    });
-
-    const trendData = calculateTrends(formattedPrices);
+    const trendData = calculateTrends(prices);
     res.json({ trends: trendData });
 });
 
 // Calculate trends for given time ranges
 function calculateTrends(prices) {
-    const currentDate = moment().startOf("day");
+    const currentDate = moment.utc();
     let trends = {};
 
     const periods = {
@@ -154,28 +148,47 @@ function calculateTrends(prices) {
     };
 
     for (let key in periods) {
-        const { number, period } = periods[key];
-        const pastDate = currentDate
-            .clone()
-            .subtract(number, period)
-            .startOf("day"); // Ensure comparisons ignore time of day
+        let pastDate;
+
+        if (key === "30m") {
+            // Find the timestamp of the last price change more than 30 minutes ago
+            pastDate = prices.find((price) => {
+                const priceDate = moment.utc(price.timestamp);
+                return currentDate.diff(priceDate, "minutes") >= 30;
+            })?.timestamp;
+
+            if (!pastDate) {
+                // If no price change found within 30 minutes, use the oldest available price
+                pastDate = prices[prices.length - 1].timestamp;
+            }
+
+            pastDate = moment.utc(pastDate);
+        } else {
+            const { number, period } = periods[key];
+            pastDate = moment.utc().subtract(number, period);
+        }
+
+        // console.log(`Calculating trend for ${key} period`);
+        // console.log("Current date:", currentDate.format());
+        // console.log("Past date:", pastDate.format());
 
         const relevantPrices = prices.filter((price) => {
-            const priceDate = moment(price.timestamp);
+            const priceDate = moment.utc(price.timestamp);
             return priceDate.isSameOrAfter(pastDate);
         });
 
         if (relevantPrices.length) {
-            const high = Math.max(...relevantPrices.map((p) => p.price));
-            const low = Math.min(...relevantPrices.map((p) => p.price));
-            const startPrice = relevantPrices[0].price;
-            const endPrice = relevantPrices[relevantPrices.length - 1].price;
-            const percentChange = ((startPrice - endPrice) / endPrice) * 100;
+            const startPrice = relevantPrices[relevantPrices.length - 1].price;
+            const currentPrice  = relevantPrices[0].price;
+            const percentChange = ((currentPrice - startPrice) / startPrice) * 100;
             trends[key] = {
-                high,
-                low,
+                start: startPrice,
+                current: currentPrice,
                 percentChange: percentChange.toFixed(2) + "%",
             };
+            // console.log("Start price:", startPrice);
+            // console.log("Current price:", currentPrice);
+            // console.log("Percent change:", percentChange);
         } else {
             trends[key] = {
                 high: null,

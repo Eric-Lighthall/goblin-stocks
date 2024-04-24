@@ -84,6 +84,7 @@ h1 {
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 #chart-area h1 {

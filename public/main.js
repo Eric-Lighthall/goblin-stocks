@@ -1,12 +1,13 @@
+let tokenPriceData = [];
 async function getTokenPrice() {
     try {
         const response = await fetch("/graph-data");
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        displayUpdateTimeDetails(data);
-        drawGraph(data);
+        tokenPriceData = await response.json();
+        displayUpdateTimeDetails(tokenPriceData);
+        drawGraph(tokenPriceData);
     } catch (error) {
         console.error("Could not fetch token prices: ", error);
     }
@@ -36,13 +37,13 @@ function drawGraph(data) {
     const height = containerWidth * aspectRatio;
 
     // Set up the dimensions and margins of the graph
-    const margin = { top: 20, right: 20, bottom: 30, left: 70 };
+    const margin = { top: 20, right: 100, bottom: 30, left: 70 };
     const width = containerWidth - margin.left - margin.right;
 
     // Append an SVG element to the body
     const svg = d3
         .select("#chart")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", containerWidth)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
@@ -280,4 +281,8 @@ document.querySelector("[data-time-range='24h']").classList.add("active");
 document.addEventListener("DOMContentLoaded", () => {
     getTokenPrice();
     fetchAndDisplayTrends();
+});
+
+window.addEventListener("resize", () => {
+    drawGraph(tokenPriceData);
 });

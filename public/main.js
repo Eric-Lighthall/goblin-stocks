@@ -30,10 +30,14 @@ function drawGraph(data) {
     // Clear the existing graph
     d3.select("#chart").selectAll("*").remove();
 
+    const containerWidth = d3.select(".chart-area").node().getBoundingClientRect().width;
+
+    const aspectRatio = 600 / 1400;
+    const height = containerWidth * aspectRatio;
+
     // Set up the dimensions and margins of the graph
     const margin = { top: 20, right: 20, bottom: 30, left: 70 };
-    const width = 1400 - margin.left - margin.right;
-    const height = 600 - margin.top - margin.bottom;
+    const width = containerWidth - margin.left - margin.right;
 
     // Append an SVG element to the body
     const svg = d3
@@ -189,6 +193,10 @@ function updateTrendDisplay(trends) {
                     : trend.percentChange;
             const colorClass =
                 parseFloat(trend.percentChange) > 0 ? "text-green" : "text-red";
+
+            if (range === '30m') {
+                updateRecommendations(parseFloat(trend.percentChange));
+            }
             return `
             <div class="trend-row">
                 <h3 class="trend-title">${range.toUpperCase()}</h3>
@@ -232,8 +240,10 @@ function updateRecommendations(percentChange) {
     const buyRecommendationElement =
         document.getElementById("buy-recommendation");
 
-    let sellRecommendation = "Hold";
+    let sellRecommendation = "Wait";
     let buyRecommendation = "Wait";
+
+    console.log(percentChange);
 
     if (percentChange < -0.3) {
         sellRecommendation = "Sell";
@@ -243,17 +253,20 @@ function updateRecommendations(percentChange) {
 
     sellRecommendationElement.textContent = sellRecommendation;
     buyRecommendationElement.textContent = buyRecommendation;
-}
 
-// Example usage
-async function fetchLastHourPercentChange() {
-    try {
-        const response = await fetch("/last-hour-percent-change");
-        const data = await response.json();
-        const percentChange = data.percentChange;
-        updateRecommendations(percentChange);
-    } catch (error) {
-        console.error("Error fetching last hour percent change:", error);
+    sellRecommendationElement.classList.remove("text-red", "text-green");
+    buyRecommendationElement.classList.remove("text-red", "text-green");
+  
+    if (sellRecommendation === "Wait") {
+      sellRecommendationElement.classList.add("text-red");
+    } else if (sellRecommendation === "Sell") {
+      sellRecommendationElement.classList.add("text-green");
+    }
+  
+    if (buyRecommendation === "Wait") {
+      buyRecommendationElement.classList.add("text-red");
+    } else if (buyRecommendation === "Buy") {
+      buyRecommendationElement.classList.add("text-green");
     }
 }
 
@@ -267,5 +280,4 @@ document.querySelector("[data-time-range='24h']").classList.add("active");
 document.addEventListener("DOMContentLoaded", () => {
     getTokenPrice();
     fetchAndDisplayTrends();
-    fetchLastHourPercentChange();
 });

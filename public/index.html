@@ -57,7 +57,7 @@
             </nav>
         </header>
         <div class="container">
-            <div id="chart-area">
+            <div class="chart-area">
                 <h1>WoW Token Price Graph</h1>
                 <svg id="chart"></svg>
                 <div id="time-filters">
@@ -75,22 +75,28 @@
             </div>
             <div id="last-update"></div>
             <div id="time-until-next-update"></div>
+            <div id="recommendation" class="chart-area">
+                <h2>Goblin Stocks Recommendation</h2>
+                <div id="current-sell-recommendation">
+                    <p>
+                        Current Sell Recommendation:
+                        <span id="sell-recommendation"></span>
+                    </p>
+                </div>
+                <div id="current-buy-recommendation">
+                    <p>
+                        Current Buy Recommendation:
+                        <span id="buy-recommendation"></span>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div id="recommendation">
-            <h2>Goblin Stocks Recommendation</h2>
-            <div id="current-sell-recommendation">
-              <p>Current Sell Recommendation: <span id="sell-recommendation"></span></p>
-            </div>
-            <div id="current-buy-recommendation">
-              <p>Current Buy Recommendation: <span id="buy-recommendation"></span></p>
-            </div>
-          </div>
         <footer id="data-disclaimer">
             <p>
                 Please note that there may be inconsistencies in the data due to
-                server downtime and maintenance. Goblin Stocks strives to provide the most
-                accurate information possible, but occasional gaps or delays in
-                data updates may occur during these periods.
+                server downtime and maintenance. Goblin Stocks strives to
+                provide the most accurate information possible, but occasional
+                gaps or delays in data updates may occur during these periods.
             </p>
         </footer>
         <script src="main.js"></script>

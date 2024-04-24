@@ -78,7 +78,7 @@ h1 {
     font-weight: bold;
 }
 
-#chart-area {
+.chart-area {
     background-color: var(--graph-background);
     box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
@@ -156,7 +156,6 @@ h1 {
 }
 
 /* Trend Section */
-
 #current-trends {
     width: 100%;
     padding: 20px 0;
@@ -202,6 +201,30 @@ h1 {
 
 .text-red {
     color: red;
+}
+
+/* Recommendations */
+#recommendation {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 40px
+}
+
+#recommendation h2 {
+    margin-bottom: 20px;
+}
+
+#recommendation p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+}
+
+#recommendation span {
+    font-size: 1.7rem;
 }
 
 /* About Section */

@@ -201,6 +201,32 @@ function calculateTrends(prices) {
     return trends;
 }
 
+// Get last hour's percent change
+app.get('/last-hour-percent-change', async (req, res) => {
+    try {
+      const currentDate = moment.utc();
+      const oneHourAgo = currentDate.clone().subtract(1, 'hour');
+  
+      const dbConnection = db.getDb();
+      const collection = await dbConnection.collection('tokenPrices');
+      const prices = await collection.find({
+        timestamp: { $gte: oneHourAgo.toISOString() }
+      }).sort({ timestamp: 1 }).toArray();
+  
+      if (prices.length >= 2) {
+        const oldestPrice = prices[0].price;
+        const latestPrice = prices[prices.length - 1].price;
+        const percentChange = ((latestPrice - oldestPrice) / oldestPrice) * 100;
+        res.json({ percentChange: percentChange.toFixed(2) });
+      } else {
+        res.status(404).json({ error: 'Insufficient price data for the last hour' });
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+      res.status(500).send('An error occurred while fetching the last hour percent change.');
+    }
+  });
+
 // Get token price from wow API
 if (process.env.NODE_ENV === "production") {
     cron.schedule("*/30 * * * *", async (req, res) => {

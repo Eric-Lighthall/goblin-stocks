@@ -180,11 +180,16 @@ async function fetchAndDisplayTrends() {
 
 function updateTrendDisplay(trends) {
     const trendContainer = document.getElementById("trend-details");
-    trendContainer.innerHTML = Object.keys(trends).map(range => {
-        const trend = trends[range];
-        const percentChangeText = parseFloat(trend.percentChange) > 0 ? `+${trend.percentChange}` : trend.percentChange;
-        const colorClass = parseFloat(trend.percentChange) > 0 ? 'text-green' : 'text-red';
-        return `
+    trendContainer.innerHTML = Object.keys(trends)
+        .map((range) => {
+            const trend = trends[range];
+            const percentChangeText =
+                parseFloat(trend.percentChange) > 0
+                    ? `+${trend.percentChange}`
+                    : trend.percentChange;
+            const colorClass =
+                parseFloat(trend.percentChange) > 0 ? "text-green" : "text-red";
+            return `
             <div class="trend-row">
                 <h3 class="trend-title">${range.toUpperCase()}</h3>
                 <p>Start: <span class="trend-start">${trend.start}</span></p>
@@ -192,7 +197,8 @@ function updateTrendDisplay(trends) {
                 <p>Change: <span class="${colorClass}">${percentChangeText}</span></p>
             </div>
         `;
-    }).join("");
+        })
+        .join("");
 }
 
 function displayUpdateTimeDetails(data) {
@@ -200,12 +206,12 @@ function displayUpdateTimeDetails(data) {
     const lastUpdateTimestamp = new Date(data[0].timestamp);
     const now = new Date();
 
-    const lastUpdateFormatted = lastUpdateTimestamp.toLocaleString("en-US", { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+    const lastUpdateFormatted = lastUpdateTimestamp.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
     });
 
     // Calculate the difference in minutes
@@ -213,11 +219,43 @@ function displayUpdateTimeDetails(data) {
     const timeUntilNextUpdate = 30 - (diffMinutes % 30); // Time until the next 30-minute interval
 
     // Display the times in the HTML
-    document.getElementById("last-update").innerText = `Last update: ${lastUpdateFormatted}`;
-    document.getElementById("time-until-next-update").innerText = `Time until next update: ${timeUntilNextUpdate} minutes`;
+    document.getElementById("last-update").innerText =
+        `Last update: ${lastUpdateFormatted}`;
+    document.getElementById("time-until-next-update").innerText =
+        `Time until next update: ${timeUntilNextUpdate} minutes`;
 }
 
+function updateRecommendations(percentChange) {
+    const sellRecommendationElement = document.getElementById(
+        "sell-recommendation"
+    );
+    const buyRecommendationElement =
+        document.getElementById("buy-recommendation");
 
+    let sellRecommendation = "Hold";
+    let buyRecommendation = "Wait";
+
+    if (percentChange < -0.3) {
+        sellRecommendation = "Sell";
+    } else if (percentChange > 0.3) {
+        buyRecommendation = "Buy";
+    }
+
+    sellRecommendationElement.textContent = sellRecommendation;
+    buyRecommendationElement.textContent = buyRecommendation;
+}
+
+// Example usage
+async function fetchLastHourPercentChange() {
+    try {
+        const response = await fetch("/last-hour-percent-change");
+        const data = await response.json();
+        const percentChange = data.percentChange;
+        updateRecommendations(percentChange);
+    } catch (error) {
+        console.error("Error fetching last hour percent change:", error);
+    }
+}
 
 // Attach click event listeners to time filter buttons
 document.querySelectorAll("#time-filters button").forEach((button) => {
@@ -229,4 +267,5 @@ document.querySelector("[data-time-range='24h']").classList.add("active");
 document.addEventListener("DOMContentLoaded", () => {
     getTokenPrice();
     fetchAndDisplayTrends();
+    fetchLastHourPercentChange();
 });

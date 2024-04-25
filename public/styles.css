@@ -16,7 +16,6 @@ body, html {
 /* Header and Navigation */
 header {
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
-    width: 100%;
     margin-bottom: 40px;
     background-color: #12151B;
 }
@@ -29,31 +28,34 @@ header {
     width: 100%;
 }
 
-.logo img {
-    height: 50px;
-    filter: brightness(0) invert(1);
+.navbar-brand {
+    position: absolute;
 }
 
-.nav-links {
-    list-style: none;
-    padding: 0;
+.navbar-nav {
     display: flex;
-    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
 }
 
-.nav-links li {
-    margin: 0 20px;
-}
-
-.nav-links a {
+.nav-link {
     text-decoration: none;
     color: #fff;
     font-size: 16px;
-    transition: color 0.3s;
+    margin: 0 20px;
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.nav-links a:hover {
+.nav-link:hover {
+    background-color: #1c1f26;
     color: #ff6b6b;
+    border-radius: 5px;
+}
+
+.logo img {
+    height: 50px;
+    filter: brightness(0) invert(1);
 }
 
 /* Main Content */

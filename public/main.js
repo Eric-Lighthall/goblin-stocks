@@ -89,7 +89,12 @@ function drawGraph(data) {
     svg.append("path").datum(data).attr("class", "line").attr("d", line);
 
     // Create the tooltip
-    const tooltip = d3.select("body").append("div").attr("class", "tooltip");
+    let tooltip = d3.select(".tooltip");
+    if (tooltip.empty()) {
+        tooltip = d3.select("body").append("div").attr("class", "tooltip");
+    } else {
+        tooltip.html("");
+    }
 
     // Add the overlay for capturing mouse events
     svg.append("rect")
